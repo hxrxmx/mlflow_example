@@ -6,4 +6,4 @@ params:
     - occupation
     - education
     - capital.gain
-  train_size: 1000
+  train_size: 23000

@@ -1,11 +1,17 @@
 import pandas as pd
+import mlflow
 from joblib import dump
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
-from constants import DATASET_PATH_PATTERN, MODEL_FILEPATH, RANDOM_STATE
+from constants import DATASET_PATH_PATTERN, MODEL_FILEPATH, RANDOM_STATE, MLFLOW_TRACKING_URI, MLFLOW_EXPERIMENT_NAME
 from utils import get_logger, load_params
 
 STAGE_NAME = 'train'
+
+
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
 
 def train():
@@ -21,16 +27,30 @@ def train():
 
     logger.info('Создаём модель')
     params['random_state'] = RANDOM_STATE
+
+    # mlflow.log_param("model_type", "LogisticRegression")
+    mlflow.log_param("model_type", "RandomForest")
+    mlflow.log_params(params)
+
     logger.info(f'    Параметры модели: {params}')
-    model = LogisticRegression(**params)
+
+    # model = LogisticRegression(**params)
+    model = RandomForestClassifier(**params)
 
     logger.info('Обучаем модель')
     model.fit(X_train, y_train)
 
     logger.info('Сохраняем модель')
     dump(model, MODEL_FILEPATH)
+    mlflow.sklearn.log_model(model, artifact_path="model")
     logger.info('Успешно!')
 
 
 if __name__ == '__main__':
+    if not ml_flow.active_run():
+        mlflow.start_run(run_name=STAGE_NAME)
+
     train()
+
+    if mlflow.active_run().info.run_name == STAGE_NAME:
+        mlflow.end_run()
