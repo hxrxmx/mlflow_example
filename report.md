@@ -53,3 +53,8 @@
 
 Запуск:
 - [best_run](http://158.160.2.37:5000/#/experiments/8/runs/9c42753d906f44b18c4905d8aa425741)
+
+
+## логирование датасета
+Запуск:
+- [run_w_logging_artefacts](http://158.160.2.37:5000/#/experiments/8/runs/3181e3f736a54fc5829d9f3e093b7688/artifacts)
